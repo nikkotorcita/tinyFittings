@@ -71,10 +71,10 @@ public class BTHandler {
 	protected BluetoothAdapter mBluetoothAdapter = null;
 	
 	public BTHandler() {
-		Log.v(TAG, "BTHandler created");
+		Log.d(TAG, "BTHandler created");
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		if(mBluetoothAdapter == null) {
-			Log.v(TAG, "No bluetooth support.");
+			Log.d(TAG, "No bluetooth support.");
 			return;
 		}
 		onReceivedDataListeners = new ArrayList<OnReceivedDataListener>();
@@ -92,7 +92,7 @@ public class BTHandler {
 	}
 	
 	public synchronized void start() {
-		Log.v(TAG, "start");
+		Log.d(TAG, "start");
 		
 		if(mConnectThread != null) {
 			mConnectThread.cancel();
@@ -113,7 +113,7 @@ public class BTHandler {
 	}
 	
 	public synchronized void stop() {
-		Log.v(TAG, "stop");
+		Log.d(TAG, "stop");
 		
 		if(mConnectThread != null) {
 			mConnectThread.cancel();
@@ -165,17 +165,17 @@ public class BTHandler {
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
 			case MESSAGE_STATE_CHANGE:
-				Log.v(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
+				Log.d(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
 				switch(msg.arg1) {
 				case STATE_CONNECTED:
-					Log.v(TAG, "state : STATE_CONNECTED");
+					Log.d(TAG, "state : STATE_CONNECTED");
 					break;
 				case STATE_CONNECTING:
-					Log.v(TAG, "state: STATE_CONNECTING");
+					Log.d(TAG, "state: STATE_CONNECTING");
 					break;
 				case STATE_LISTEN:
 				case STATE_NONE:
-					Log.v(TAG, "state: STATE_NONE");
+					Log.d(TAG, "state: STATE_NONE");
 					break;
 				}
 				break;
@@ -189,7 +189,7 @@ public class BTHandler {
 	};
 	
 	private synchronized void setState(int state) {
-		Log.v(TAG, "setState() " + mState + " -> " + state);
+		Log.d(TAG, "setState() " + mState + " -> " + state);
 		mState = state;
 		
 		mHandler.obtainMessage(BTHandler.MESSAGE_STATE_CHANGE, 
@@ -197,7 +197,7 @@ public class BTHandler {
 	}
 	
 	private synchronized void connect(BluetoothDevice device) {
-		Log.v(TAG, "#############connect to: " + device);
+		Log.d(TAG, "#############connect to: " + device);
 		
 		if(mState == STATE_CONNECTING) {
 			if(mConnectedThread != null) {
@@ -218,7 +218,7 @@ public class BTHandler {
 	
 	private synchronized void connected(BluetoothSocket socket, BluetoothDevice
 			device) {
-		Log.v(TAG, "repeat.......");
+		Log.d(TAG, "repeat.......");
 		if(mConnectThread != null) {
 			mConnectThread.cancel();
 			mConnectThread = null;
@@ -243,7 +243,7 @@ public class BTHandler {
 		msg.setData(bundle);
 		mHandler.sendMessage(msg);
 		
-		Log.v(TAG, "connected to ngongo222");
+		Log.d(TAG, "connected to ngongo222");
 		
 		setState(STATE_CONNECTED);
 	}
@@ -284,7 +284,7 @@ public class BTHandler {
 		}
 		
 		public void run() {
-			Log.v(TAG, "Begin mAcceptThread" + this);
+			Log.d(TAG, "Begin mAcceptThread" + this);
 			setName("AcceptThread");
 			
 			BluetoothSocket socket = null;
@@ -318,11 +318,11 @@ public class BTHandler {
 					}
 				}
 			}
-			Log.v(TAG, "End mAcceptThread");
+			Log.d(TAG, "End mAcceptThread");
 		}
 		
 		public void cancel() {
-			Log.v(TAG, "cancel " + this);
+			Log.d(TAG, "cancel " + this);
 			try{
 				mmServerSocket.close();
 			}
@@ -350,7 +350,7 @@ public class BTHandler {
 		}
 		
 		public void run() {
-			Log.v(TAG, "Begin mConnectThread");
+			Log.d(TAG, "Begin mConnectThread");
 			setName("ConnectThread");
 			
 			mBluetoothAdapter.cancelDiscovery();
@@ -393,7 +393,7 @@ public class BTHandler {
 		ByteBuffer bBuffer = null;
 		
 		public ConnectedThread(BluetoothSocket socket) {
-			Log.v(TAG, "create ConnectedThread");
+			Log.d(TAG, "create ConnectedThread");
 			mmSocket = socket;
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
@@ -411,7 +411,7 @@ public class BTHandler {
 		}
 	
 		public void run() {
-			Log.v(TAG, "Begin mConnectedThread");
+			Log.d(TAG, "Begin mConnectedThread");
 			byte[] buffer = new byte[1024];
 			int bytes;
 			
@@ -428,7 +428,7 @@ public class BTHandler {
 						.sendToTarget();
 				}
 				catch(IOException e) {
-					Log.v(TAG, "disconneceted", e);
+					Log.d(TAG, "disconneceted", e);
 					connectionLost();
 					BTHandler.this.start();
 					break;
@@ -449,7 +449,7 @@ public class BTHandler {
 		
 		public void write(int oneByte) {
 			try{
-				Log.v(TAG, "sending data " + Integer.toString(oneByte));
+				Log.d(TAG, "sending data " + Integer.toString(oneByte));
 				mmOutStream.write(oneByte);
 				mHandler.obtainMessage(BTHandler.MESSAGE_WRITE, -1, -1, oneByte)
 					.sendToTarget();
