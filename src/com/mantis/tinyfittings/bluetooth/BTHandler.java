@@ -242,8 +242,7 @@ public class BTHandler {
 		bundle.putString(BTHandler.DEVICE_NAME, "ngongo");
 		msg.setData(bundle);
 		mHandler.sendMessage(msg);
-		
-		Log.d(TAG, "connected to ngongo222");
+	
 		
 		setState(STATE_CONNECTED);
 	}
@@ -428,7 +427,7 @@ public class BTHandler {
 						.sendToTarget();
 				}
 				catch(IOException e) {
-					Log.d(TAG, "disconneceted", e);
+					Log.d(TAG, "disconnected", e);
 					connectionLost();
 					BTHandler.this.start();
 					break;

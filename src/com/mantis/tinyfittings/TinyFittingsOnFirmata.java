@@ -33,6 +33,14 @@ public class TinyFittingsOnFirmata extends BTActivity implements OnClickListener
 	private static final String fittingId = "1";
 	private static final String TINYFITTINGS_URL = "http://artiswrong.com/tinyFittings/live.html";
 	
+	private HttpClient httpclient = new DefaultHttpClient();
+	private HttpPost httppost = new HttpPost("http://www.artiswrong.com/tinyFittings/index.php");
+	private HttpResponse httpresponse;
+	
+	private List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+	
+	private boolean shouldContinue = true;
+	
 	protected static final int NUM_OF_ANALOG_CHANNELS = 6;
 	Button viewLiveData, initArduino;
 	TextView analogReading0, analogReading1, analogReading2, analogReading3, analogReading4, analogReading5;
@@ -62,7 +70,13 @@ public class TinyFittingsOnFirmata extends BTActivity implements OnClickListener
 	public
 	void onStop() {
 		super.onStop();
-		Log.d(TAG, "#$$$$$$$$$$$$$$$$$$$$$$#####");
+		shouldContinue = false;
+		try {
+			readAnalogValuesThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//readAnalogValuesThread.stop();
 	}
 	
@@ -87,9 +101,6 @@ public class TinyFittingsOnFirmata extends BTActivity implements OnClickListener
 	}
 	
 	void postAnalogValues(String[] data) throws ClientProtocolException {
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost("http://www.artiswrong.com/tinyFittings/index.php");
-		
 		try{
 			String jsonString = "{\"fittingId\": " + fittingId + ",";
 			for(int i = 0; i < 6; i++) {
@@ -99,12 +110,14 @@ public class TinyFittingsOnFirmata extends BTActivity implements OnClickListener
 			}
 			jsonString += "}";
 			
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 			nameValuePairs.add(new BasicNameValuePair("sample", jsonString));
-			
+	
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			HttpResponse response = httpclient.execute(httppost);
-			//Log.d(TAG, "response = " + response.getStatusLine().toString());
+			httpresponse = httpclient.execute(httppost);
+			Log.d(TAG, "response = " + httpresponse.getStatusLine().toString());
+			
+			httpresponse.getEntity().consumeContent();
+			nameValuePairs.clear();
 		}
 		catch(IOException e) {
 			Log.d(TAG, "some unexplained shit happened...");
@@ -145,7 +158,7 @@ public class TinyFittingsOnFirmata extends BTActivity implements OnClickListener
 	
 	Thread readAnalogValuesThread = new Thread() {
 		@Override public void run() {
-			while(true) {
+			while(shouldContinue) {
 				for(int i = 0; i < NUM_OF_ANALOG_CHANNELS; i++) {
 					//Log.d(TAG, "analog channel " + i + " = " + Integer.toString(arduino.analogRead(i)));
 					anValues[i] = Integer.toString(arduino.analogRead(i));
