@@ -62,14 +62,25 @@ public class TinyFittingsOnFirmata extends BTActivity implements OnClickListener
 	public
 	void onStop() {
 		super.onStop();
+		Log.d(TAG, "#$$$$$$$$$$$$$$$$$$$$$$#####");
 		//readAnalogValuesThread.stop();
 	}
 	
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.d(TAG, "onPause() called");
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.d(TAG, "onResume() called");
+	}
+	
 	private void setupArduino() {
-		Log.v(TAG, "Setting up Arduino..");
-		if(arduino == null) {
-			Log.v(TAG, "arduino object is null#########");
-		}
+		Log.d(TAG, "Setting up Arduino..");
+		
 		arduino.pinMode(13, Arduino.OUTPUT);
 		arduino.reportState();
 		readAnalogValuesThread.start();
@@ -93,10 +104,10 @@ public class TinyFittingsOnFirmata extends BTActivity implements OnClickListener
 			
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse response = httpclient.execute(httppost);
-			//Log.v(TAG, "response = " + response.getStatusLine().toString());
+			//Log.d(TAG, "response = " + response.getStatusLine().toString());
 		}
 		catch(IOException e) {
-			Log.v(TAG, "some unexplained shit happened...");
+			Log.d(TAG, "some unexplained shit happened...");
 		}
 	}
 
@@ -104,7 +115,7 @@ public class TinyFittingsOnFirmata extends BTActivity implements OnClickListener
 	public void onClick(View v) {
 		switch(v.getId()) {
 		case R.id.init_arduino:
-			Log.v(TAG, "pressing init_arduino button");
+			Log.d(TAG, "pressing init_arduino button");
 			setupArduino();
 			break;
 		case R.id.view_livedata:
@@ -136,7 +147,7 @@ public class TinyFittingsOnFirmata extends BTActivity implements OnClickListener
 		@Override public void run() {
 			while(true) {
 				for(int i = 0; i < NUM_OF_ANALOG_CHANNELS; i++) {
-					//Log.v(TAG, "analog channel " + i + " = " + Integer.toString(arduino.analogRead(i)));
+					//Log.d(TAG, "analog channel " + i + " = " + Integer.toString(arduino.analogRead(i)));
 					anValues[i] = Integer.toString(arduino.analogRead(i));
 				}
 				runOnUiThread(new Runnable() {

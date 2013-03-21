@@ -54,7 +54,7 @@ public abstract class BTActivity extends Activity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		Log.v(TAG, "ON START");
+		Log.d(TAG, "ON START");
 		
 		if(!btHandler.isEnabled()) {
 			Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -65,19 +65,20 @@ public abstract class BTActivity extends Activity {
 	
 	@Override
 	public void onStop() {
+		Log.d(TAG, "ON STOP");
 		super.onStop();
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-		Log.v(TAG, "ON PAUSE");
+		Log.d(TAG, "ON PAUSE");
 	}
 	
 	@Override
 	public synchronized void onResume() {
 		super.onResume();
-		Log.v(TAG, "ON RESUME");
+		Log.d(TAG, "ON RESUME");
 		if(btHandler.getState() == BTHandler.STATE_NONE) {
 			btHandler.start();
 		}
@@ -88,7 +89,7 @@ public abstract class BTActivity extends Activity {
 		super.onDestroy();
 		if(btHandler != null)
 			btHandler.stop();
-		Log.v(TAG, "ON DESTROY");
+		Log.d(TAG, "ON DESTROY");
 	}
 	
 	@Override
@@ -111,7 +112,7 @@ public abstract class BTActivity extends Activity {
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.v(TAG, "onActivityResult " + resultCode);
+		Log.d(TAG, "onActivityResult " + resultCode);
 		switch(requestCode) {
 		case REQUEST_CONNECT_DEVICE:
 			if(resultCode == Activity.RESULT_OK) {
@@ -121,10 +122,10 @@ public abstract class BTActivity extends Activity {
 			}
 		case REQUEST_ENABLE_BT:
 			if(resultCode == Activity.RESULT_OK) {
-				Log.v(TAG, "Bluetooth enabled");
+				Log.d(TAG, "Bluetooth enabled");
 			}
 			else {
-				Log.v(TAG, "Bluetooth not enabled");
+				Log.d(TAG, "Bluetooth not enabled");
 				finish();
 			}
 		}
