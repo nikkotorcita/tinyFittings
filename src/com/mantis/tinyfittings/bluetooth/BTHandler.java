@@ -106,10 +106,10 @@ public class BTHandler {
 		
 		setState(STATE_LISTEN);
 		
-		if(mAcceptThread == null) {
-			mAcceptThread = new AcceptThread();
-			mAcceptThread.start();
-		}
+//		if(mAcceptThread == null) {
+//			mAcceptThread = new AcceptThread();
+//			mAcceptThread.start();
+//		}
 	}
 	
 	public synchronized void stop() {
@@ -125,10 +125,10 @@ public class BTHandler {
 			mConnectedThread = null;
 		}
 		
-		if(mAcceptThread != null) {
-			mAcceptThread.cancel();
-			mAcceptThread = null;
-		}
+//		if(mAcceptThread != null) {
+//			mAcceptThread.cancel();
+//			mAcceptThread = null;
+//		}
 		
 		setState(STATE_NONE);
 	}
@@ -229,10 +229,10 @@ public class BTHandler {
 			mConnectedThread = null;
 		}
 		
-		if(mAcceptThread != null) {
-			mAcceptThread.cancel();
-			mAcceptThread = null;
-		}
+//		if(mAcceptThread != null) {
+//			mAcceptThread.cancel();
+//			mAcceptThread = null;
+//		}
 		
 		mConnectedThread = new ConnectedThread(socket);
 		mConnectedThread.start();
